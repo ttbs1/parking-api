@@ -2,20 +2,20 @@
   "name": "myapp",
   "version": "1.0.0",
   "description": "parking management api",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ttbs1/parkingback.git"
+    "url": "git+https://github.com/ttbs1/parking-api.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ttbs1/parkingback/issues"
+    "url": "https://github.com/ttbs1/parking-api/issues"
   },
-  "homepage": "https://github.com/ttbs1/parkingback#readme",
+  "homepage": "https://github.com/ttbs1/parking-api#readme",
   "dependencies": {
     "express": "^4.17.1"
   }
