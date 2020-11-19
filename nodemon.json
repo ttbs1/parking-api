@@ -1,0 +1,9 @@
+{
+    "env" : {
+        "MYSQL_USER" : "gf",
+        "MYSQL_PASSWORD" : "Y(2aZ_9)",
+        "MYSQL_DATABASE" : "parking",
+        "MYSQL_HOST" : "localhost",
+        "MYSQL_PORT" : 3306
+    }
+}
