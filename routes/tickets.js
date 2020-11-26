@@ -22,17 +22,17 @@ router.get('/', (req, res, next) => {
                 }
                 const response = {
                     length: result.length,
-                    request: {
-                        type: 'GET',
-                        description: 'Return all tickets'
-                    },
                     tickets: result.map(ticket => {
                         return {
                             id: ticket.id,
                             placa: ticket.placa,
                             tarifa: ticket.tarifa,
                             datahora: ticket.datahora,
-                            url: 'http://localhost:3000/tickets/' + ticket.id
+                            request: {
+                                type: 'GET',
+                                description: 'Return ticket from id',
+                                url: 'http://localhost:3000/tickets/' + ticket.id
+                            },
                         }
                     }) 
                     
@@ -96,19 +96,19 @@ router.get('/:id', (req, res, next) => {
                     });
                 }
                 const response = {
-                    request: {
-                        type: 'GET',
-                        description: 'Return ticket by id'
-                    },
                     tickets: result.map(ticket => {
                         return {
                             id: ticket.id,
                             placa: ticket.placa,
                             tarifa: ticket.tarifa,
                             datahora: ticket.datahora,
+                            request: {
+                                type: 'GET',
+                                description: 'Return all tickets',
+                                url: 'http://localhost:3000/tickets'
+                            }
                         }
                     }) 
-                    
                 }
                 res.status(201).send(response);
             }
@@ -116,19 +116,75 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-router.patch('/:id_produto', (req, res, next) => {
-    const id = req.params.id_produto;
-    res.status(200).send({
-        mensagem: 'usando o PATCH by id',
-        id: id
+router.patch('/:id', (req, res, next) => {
+    mysql.getConnection((error, conn) => {
+        if (error)
+            return res.status(500).send({
+                error: error,
+                response: null
+            });
+        
+        conn.query(
+            'UPDATE tickets SET placa = ?, tarifa = ? WHERE id = ?',
+            [req.body.placa, req.body.tarifa, req.params.id],
+            (error, result, field) => {
+                conn.release();
+                if (error) {
+                    return res.status(500).send({
+                        error: error,
+                        response: null
+                    });
+                }
+                const response = {
+                    message: 'Ticket atualizado com sucesso',
+                    updatedTicket: {
+                        id: req.params.id,
+                        placa: req.body.placa,
+                        tarifa: req.body.tarifa,
+                        request: {
+                            type: 'GET',
+                            description: 'Return ticket by id',
+                            url: 'http://localhost:3000/tickets/' + req.params.id
+                        }
+                    }
+                }
+                res.status(201).send(response);
+            }
+        )
     });
 });
 
-router.delete('/:id_produto', (req, res, next) => {
-    const id = req.params.id_produto;
-    res.status(200).send({
-        mensagem: 'usando o Delete by id',
-        id: id
+router.delete('/:id', (req, res, next) => {
+    mysql.getConnection((error, conn) => {
+        if (error)
+            return res.status(500).send({
+                error: error,
+                response: null
+            });
+        
+        conn.query(
+            'DELETE FROM tickets WHERE id = ?',
+            [req.params.id],
+            (error, result, field) => {
+                conn.release();
+                if (error) {
+                    return res.status(500).send({
+                        error: error,
+                        response: null
+                    });
+                }
+                const response = {
+                    message: 'Ticket excluído com sucesso',
+                    id: req.params.id,
+                    request: {
+                        type: 'GET',
+                        description: 'Return all tickets',
+                        url: 'http://localhost:3000/tickets'
+                    }
+                }
+                res.status(201).send(response);
+            }
+        )
     });
 });
 
