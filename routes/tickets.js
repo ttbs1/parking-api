@@ -1,4 +1,5 @@
 const express = require('express');
+const app = require('../app');
 const router = express.Router();
 const mysql = require('../mysql').pool;
 
@@ -11,7 +12,7 @@ router.get('/', (req, res, next) => {
             });
         
         conn.query(
-            'SELECT * FROM tickets',
+            'SELECT * FROM ticket',
             (error, result, field) => {
                 conn.release();
                 if (error) {
@@ -25,17 +26,17 @@ router.get('/', (req, res, next) => {
                     tickets: result.map(ticket => {
                         return {
                             id: ticket.id,
-                            placa: ticket.placa,
-                            tarifa: ticket.tarifa,
-                            datahora: ticket.datahora,
+                            plate: ticket.plate,
+                            rate: ticket.rate,
+                            start: ticket.start,
+                            end: ticket.end,
                             request: {
                                 type: 'GET',
                                 description: 'Return ticket from id',
-                                url: 'http://localhost:3000/tickets/' + ticket.id
+                                url: process.env.URL_API + 'tickets/' + ticket.id
                             },
                         }
-                    }) 
-                    
+                    })
                 }
                 res.status(201).send(response);
             }
@@ -53,8 +54,8 @@ router.post('/', (req, res, next) => {
             });
         
         conn.query(
-            'INSERT INTO tickets (placa, tarifa) VALUES (?,?)',
-            [req.body.placa, req.body.tarifa],
+            'INSERT INTO ticket (client_id, plate, rate) VALUES (?,?)',
+            [req.body.client_id, req.body.plate, req.body.rate],
             (error, result, field) => {
                 conn.release();
                 if (error) {
@@ -85,7 +86,7 @@ router.get('/:id', (req, res, next) => {
             });
         
         conn.query(
-            'SELECT * FROM tickets WHERE id = ?',
+            'SELECT * FROM ticket WHERE id = ?',
             [req.params.id],
             (error, result, field) => {
                 conn.release();
@@ -96,16 +97,17 @@ router.get('/:id', (req, res, next) => {
                     });
                 }
                 const response = {
-                    tickets: result.map(ticket => {
+                    ticket: result.map(ti => {
                         return {
-                            id: ticket.id,
-                            placa: ticket.placa,
-                            tarifa: ticket.tarifa,
-                            datahora: ticket.datahora,
+                            id: ti.id,
+                            plate: ti.plate,
+                            rate: ti.rate,
+                            start: ti.start,
+                            end: ti.end,
                             request: {
                                 type: 'GET',
                                 description: 'Return all tickets',
-                                url: 'http://localhost:3000/tickets'
+                                url: process.env.URL_API + 'tickets'
                             }
                         }
                     }) 
@@ -125,8 +127,8 @@ router.patch('/:id', (req, res, next) => {
             });
         
         conn.query(
-            'UPDATE tickets SET placa = ?, tarifa = ? WHERE id = ?',
-            [req.body.placa, req.body.tarifa, req.params.id],
+            'UPDATE ticket SET client_id = ?, plate = ?, rate = ? WHERE id = ?',
+            [req.body.client_id, req.body.plate, req.body.rate, req.params.id],
             (error, result, field) => {
                 conn.release();
                 if (error) {
@@ -139,12 +141,13 @@ router.patch('/:id', (req, res, next) => {
                     message: 'Ticket atualizado com sucesso',
                     updatedTicket: {
                         id: req.params.id,
-                        placa: req.body.placa,
-                        tarifa: req.body.tarifa,
+                        client_id: req.body.client_id,
+                        plate: req.body.plate,
+                        rate: req.body.rate,
                         request: {
                             type: 'GET',
                             description: 'Return ticket by id',
-                            url: 'http://localhost:3000/tickets/' + req.params.id
+                            url: process.env.URL_API + 'tickets/' + req.params.id
                         }
                     }
                 }
@@ -163,7 +166,7 @@ router.delete('/:id', (req, res, next) => {
             });
         
         conn.query(
-            'DELETE FROM tickets WHERE id = ?',
+            'DELETE FROM ticket WHERE id = ?',
             [req.params.id],
             (error, result, field) => {
                 conn.release();
@@ -179,7 +182,7 @@ router.delete('/:id', (req, res, next) => {
                     request: {
                         type: 'GET',
                         description: 'Return all tickets',
-                        url: 'http://localhost:3000/tickets'
+                        url: process.env.URL_API + 'tickets'
                     }
                 }
                 res.status(201).send(response);

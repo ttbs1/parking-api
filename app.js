@@ -11,6 +11,8 @@ app.use(bodyParser.json());
 // --->>> ROTAS <<<---
 const rotaTickets = require('./routes/tickets');
 app.use('/tickets', rotaTickets);
+const rotaClients = require('./routes/clients');
+app.use('/clients', rotaClients);
 
 
 

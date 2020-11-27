@@ -1,0 +1,10 @@
+{
+	"prices": {
+		"default": 500,
+		"vip": 480
+	},
+	"promo": {
+		"for_each": 5,
+		"earn": 1
+	}
+}
