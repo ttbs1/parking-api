@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
             });
         
         conn.query(
-            'SELECT t.id, c.name, t.plate, t.rate, t.start, t.end FROM ticket AS t LEFT JOIN client AS c ON t.client_id = c.id',
+            'SELECT * FROM client',
             (error, result, field) => {
                 conn.release();
                 if (error) {
@@ -23,18 +23,17 @@ router.get('/', (req, res, next) => {
                 }
                 const response = {
                     length: result.length,
-                    tickets: result.map(ticket => {
+                    clients: result.map(client => {
                         return {
-                            id: ticket.id,
-                            client: ticket.name,
-                            plate: ticket.plate,
-                            rate: ticket.rate,
-                            start: ticket.start,
-                            end: ticket.end,
+                            id: client.id,
+                            name: client.name,
+                            accumulated_time: client.accumulated_time,
+                            total_time: client.total_time,
+                            total_spent: client.total_spent,
                             request: {
                                 type: 'GET',
-                                description: 'Return ticket from id',
-                                url: process.env.URL_API + 'tickets/' + ticket.id
+                                description: 'Return client from id',
+                                url: process.env.URL_API + 'clients/' + client.id
                             },
                         }
                     })
@@ -55,8 +54,8 @@ router.post('/', (req, res, next) => {
             });
         
         conn.query(
-            'INSERT INTO ticket (client_id, plate, rate) VALUES (?,?,?)',
-            [req.body.client_id, req.body.plate, req.body.rate],
+            'INSERT INTO client (name) VALUE (?)',
+            [req.body.name],
             (error, result, field) => {
                 conn.release();
                 if (error) {
@@ -70,7 +69,7 @@ router.post('/', (req, res, next) => {
 
                 }
                 res.status(201).send({
-                    mensagem: 'Ticket criado com sucesso',
+                    mensagem: 'Cliente cadastrado com sucesso',
                     id: result.insertId
                 });
             }
@@ -87,7 +86,7 @@ router.get('/:id', (req, res, next) => {
             });
         
         conn.query(
-            'SELECT t.id, c.name, t.plate, t.rate, t.start, t.end FROM ticket AS t LEFT JOIN client AS c ON t.client_id = c.id WHERE t.id = ?',
+            'SELECT * FROM client WHERE id = ?',
             [req.params.id],
             (error, result, field) => {
                 conn.release();
@@ -98,18 +97,17 @@ router.get('/:id', (req, res, next) => {
                     });
                 }
                 const response = {
-                    ticket: result.map(ti => {
+                    client: result.map(cli => {
                         return {
-                            id: ti.id,
-                            client: ti.name,
-                            plate: ti.plate,
-                            rate: ti.rate,
-                            start: ti.start,
-                            end: ti.end,
+                            id: cli.id,
+                            name: cli.name,
+                            accumulated_time: cli.accumulated_time,
+                            total_time: cli.total_time,
+                            total_spent: cli.total_spent,
                             request: {
                                 type: 'GET',
-                                description: 'Return all tickets',
-                                url: process.env.URL_API + 'tickets'
+                                description: 'Return all clients',
+                                url: process.env.URL_API + 'clients'
                             }
                         }
                     }) 
@@ -129,8 +127,8 @@ router.patch('/:id', (req, res, next) => {
             });
         
         conn.query(
-            'UPDATE ticket SET client_id = ?, plate = ?, rate = ? WHERE id = ?',
-            [req.body.client_id, req.body.plate, req.body.rate, req.params.id],
+            'UPDATE client SET name = ?, accumulated_time = ?, total_time = ?, total_spent = ? WHERE id = ?',
+            [req.body.name, req.body.accumulated_time, req.body.total_time, req.body.total_spent, req.params.id],
             (error, result, field) => {
                 conn.release();
                 if (error) {
@@ -140,7 +138,7 @@ router.patch('/:id', (req, res, next) => {
                     });
                 }
                 const response = {
-                    message: 'Ticket atualizado com sucesso',
+                    message: 'Cliente atualizado com sucesso',
                     updatedTicket: {
                         id: req.params.id,
                         client_id: req.body.client_id,
@@ -148,8 +146,8 @@ router.patch('/:id', (req, res, next) => {
                         rate: req.body.rate,
                         request: {
                             type: 'GET',
-                            description: 'Return ticket by id',
-                            url: process.env.URL_API + 'tickets/' + req.params.id
+                            description: 'Return client by id',
+                            url: process.env.URL_API + 'clients/' + req.params.id
                         }
                     }
                 }
@@ -168,7 +166,7 @@ router.delete('/:id', (req, res, next) => {
             });
         
         conn.query(
-            'DELETE FROM ticket WHERE id = ?',
+            'DELETE FROM client WHERE id = ?',
             [req.params.id],
             (error, result, field) => {
                 conn.release();
@@ -179,12 +177,12 @@ router.delete('/:id', (req, res, next) => {
                     });
                 }
                 const response = {
-                    message: 'Ticket excluído com sucesso',
+                    message: 'Cliente excluído com sucesso',
                     id: req.params.id,
                     request: {
                         type: 'GET',
-                        description: 'Return all tickets',
-                        url: process.env.URL_API + 'tickets'
+                        description: 'Return all clients',
+                        url: process.env.URL_API + 'clients'
                     }
                 }
                 res.status(201).send(response);

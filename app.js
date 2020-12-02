@@ -10,11 +10,9 @@ app.use(bodyParser.json());
 
 // --->>> ROTAS <<<---
 const rotaTickets = require('./routes/tickets');
-app.use('/tickets', rotaTickets);
 const rotaClients = require('./routes/clients');
+app.use('/tickets', rotaTickets);
 app.use('/clients', rotaClients);
-
-
 
 app.use((req, res, next) => {
     const erro = new Error('Não encontrado');
