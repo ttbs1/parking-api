@@ -38,7 +38,7 @@ router.get('/', (req, res, next) => {
                         }
                     })
                 }
-                res.status(201).send(response);
+                res.status(200).send(response);
             }
         )
     });
@@ -69,7 +69,7 @@ router.post('/', (req, res, next) => {
 
                 }
                 res.status(201).send({
-                    mensagem: 'Cliente cadastrado com sucesso',
+                    message: 'Cliente cadastrado com sucesso',
                     id: result.insertId
                 });
             }
@@ -112,7 +112,7 @@ router.get('/:id', (req, res, next) => {
                         }
                     }) 
                 }
-                res.status(201).send(response);
+                res.status(200).send(response);
             }
         )
     });
@@ -151,7 +151,7 @@ router.patch('/:id', (req, res, next) => {
                         }
                     }
                 }
-                res.status(201).send(response);
+                res.status(202).send(response);
             }
         )
     });
@@ -185,7 +185,7 @@ router.delete('/:id', (req, res, next) => {
                         url: process.env.URL_API + 'clients'
                     }
                 }
-                res.status(201).send(response);
+                res.status(202).send(response);
             }
         )
     });
