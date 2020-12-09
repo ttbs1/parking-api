@@ -6,6 +6,7 @@
         "MYSQL_HOST" : "localhost",
         "MYSQL_PORT" : 3306,
 
-        "URL_API" : "http://localhost:3000/"
+        "URL_API" : "http://localhost:3000/",
+        "JWT_KEY" : "&dhega9$pWZc"
     }
 }

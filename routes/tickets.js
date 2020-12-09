@@ -2,8 +2,9 @@ const express = require('express');
 const app = require('../app');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const login = require('../middleware/login');
 
-router.get('/', (req, res, next) => {
+router.get('/', login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error)
             return res.status(500).send({
@@ -39,13 +40,13 @@ router.get('/', (req, res, next) => {
                         }
                     })
                 }
-                res.status(201).send(response);
+                res.status(200).send(response);
             }
         )
     });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', login, (req, res, next) => {
 
     mysql.getConnection((error, conn) => {
         if (error)
@@ -70,7 +71,7 @@ router.post('/', (req, res, next) => {
 
                 }
                 res.status(201).send({
-                    mensagem: 'Ticket criado com sucesso',
+                    message: 'Ticket criado com sucesso',
                     id: result.insertId
                 });
             }
@@ -78,7 +79,7 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error)
             return res.status(500).send({
@@ -114,13 +115,13 @@ router.get('/:id', (req, res, next) => {
                         }
                     }) 
                 }
-                res.status(201).send(response);
+                res.status(200).send(response);
             }
         )
     });
 });
 
-router.patch('/:id', (req, res, next) => {
+router.patch('/:id', login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error)
             return res.status(500).send({
@@ -153,13 +154,13 @@ router.patch('/:id', (req, res, next) => {
                         }
                     }
                 }
-                res.status(201).send(response);
+                res.status(202).send(response);
             }
         )
     });
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error)
             return res.status(500).send({
@@ -187,7 +188,7 @@ router.delete('/:id', (req, res, next) => {
                         url: process.env.URL_API + 'tickets'
                     }
                 }
-                res.status(201).send(response);
+                res.status(202).send(response);
             }
         )
     });

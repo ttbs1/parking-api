@@ -3,6 +3,7 @@ const app = require('../app');
 const router = express.Router();
 const mysql = require('../mysql').pool;
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 router.post('/register', (req, res, next) => {
 
@@ -41,13 +42,23 @@ router.post('/login', (req, res, next) => {
 
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error }) };
-        conn.query('SELECT * FROM user WHERE username = ?', [req.body.username], (error, result) => {
+        conn.query('SELECT * FROM user WHERE username = ?', [req.body.username], (error, results) => {
             conn.release();
             if (error) { return res.status(500).send({ error: error }) };
-            if (!result.length > 0) { return res.status(404).send({ message: "Usuário não cadastrado" })}
-            bcrypt.compare(req.body.password, result[0].password, (err, result) => {
+            if (!results.length > 0) { return res.status(404).send({ message: "Usuário não cadastrado" })}
+            bcrypt.compare(req.body.password, results[0].password, (err, result) => {
                 if (err) {return res.status(417).send({message: 'Falha na autenticação'})};
-                if (result) {return res.status(200).send({message: "Autenticado com sucesso"})};
+                if (result) {
+                    let token = jwt.sign({
+                        id: results[0].id,
+                        username: results[0].username
+                    }, 
+                    process.env.JWT_KEY,
+                    {
+                        expiresIn: "7 days"
+                    });
+                    return res.status(200).send({message: "Autenticado com sucesso", token: token})
+                };
                 return res.status(401).send({message: "Senha inválida"});
             });
 

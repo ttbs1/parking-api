@@ -2,8 +2,9 @@ const express = require('express');
 const app = require('../app');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const login = require('../middleware/login');
 
-router.get('/', (req, res, next) => {
+router.get('/', login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error)
             return res.status(500).send({
@@ -44,7 +45,7 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', login, (req, res, next) => {
 
     mysql.getConnection((error, conn) => {
         if (error)
@@ -77,7 +78,7 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error)
             return res.status(500).send({
@@ -118,7 +119,7 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-router.patch('/:id', (req, res, next) => {
+router.patch('/:id', login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error)
             return res.status(500).send({
@@ -157,7 +158,7 @@ router.patch('/:id', (req, res, next) => {
     });
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', login, (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error)
             return res.status(500).send({
